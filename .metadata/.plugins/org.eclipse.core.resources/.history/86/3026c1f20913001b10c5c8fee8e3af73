@@ -1,0 +1,7 @@
+package com.everis.proyect.services;
+
+import io.reactivex.Single;
+
+public interface BaseService<E> {
+  public Single<E> findbyDocumento(String documento) throws Exception;
+}

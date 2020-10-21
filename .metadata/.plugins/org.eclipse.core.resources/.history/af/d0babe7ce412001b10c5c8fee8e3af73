@@ -1,0 +1,31 @@
+package com.everis.proyect.service;
+
+import com.everis.proyect.models.Fingerprints;
+import com.everis.proyect.models.Persons;
+import com.everis.proyect.models.Reniec;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+public class PersonService implements IServiceBase {
+  @Autowired
+  private RestTemplate personRest;
+
+  @Override
+  public Persons findByDocument(String documentNumber) {
+    return personRest.getForObject("http://localhost:9001/core/persons?documentNumber="
+  + documentNumber.toString(), Persons.class);
+  }
+  
+  public Reniec findReniecByDocument(String documentNumber) {
+    return personRest.postForObject("http://localhost:9002/external/reniec/validate", documentNumber, Reniec.class);
+  }
+  
+  public Fingerprints findFingerprintByDocument(String documentNumber) {
+    return personRest.getForObject("http://localhost:9003//core/cards?documentNumber="
+        + documentNumber.toString(), Fingerprints.class);
+  }
+}

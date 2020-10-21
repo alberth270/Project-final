@@ -1,0 +1,7 @@
+package com.everis.proyect.service;
+
+import io.reactivex.Single;
+
+public interface IServiceBase {
+  public Persons findByDocument(String document);
+}

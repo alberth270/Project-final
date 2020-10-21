@@ -1,0 +1,9 @@
+package com.everis.proyect.models;
+
+
+public class AtmDeposit {
+  private String fingerprintEntityName;
+  private List<String> validAccounts;
+  private double customerAmount;
+  
+}

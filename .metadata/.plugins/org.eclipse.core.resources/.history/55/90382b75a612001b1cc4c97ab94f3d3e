@@ -1,0 +1,21 @@
+package com.everis.proyect.services;
+
+import com.everis.proyect.entity.Person;
+import com.everis.proyect.repository.PersonRepository;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
+import javax.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PersonService implements BaseService<Person> {
+  @Autowired
+  PersonRepository personrepository;
+
+  @Override
+  @Transactional
+  public Single<Person> findbyDocumento(String documento) {
+    return Single.just(personrepository.findByDocumento(documento)).subscribeOn(Schedulers.io());
+  }
+}

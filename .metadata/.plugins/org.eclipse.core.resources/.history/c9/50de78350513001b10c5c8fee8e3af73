@@ -1,0 +1,5 @@
+package com.everis.proyect.models;
+
+public class validAccounts {
+  private List<String> accountNumber;
+}

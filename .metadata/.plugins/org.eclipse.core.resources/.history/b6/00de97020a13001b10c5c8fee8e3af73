@@ -1,0 +1,11 @@
+package com.everis.proyect.services;
+
+import com.everis.proyect.entity.Person;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
+
+public interface BaseService<E> {
+  public Single<E> findbyDocumento(String documento) throws Exception;
+  public Completable update(String documento, Person entity) throws Exception;
+}

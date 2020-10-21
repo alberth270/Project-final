@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: cards-service
+  
+  cloud:
+    config:
+      uri: http://localhost:8080
+      
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

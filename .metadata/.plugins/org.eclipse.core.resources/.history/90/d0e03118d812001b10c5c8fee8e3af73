@@ -1,0 +1,6 @@
+package com.everis.proyect.service;
+
+
+public interface IServiceBase {
+  public ? findByDocument(String document);
+}

@@ -1,0 +1,81 @@
+package com.everis.proyect.controller;
+
+import com.everis.proyect.models.AtmDeposit;
+import com.everis.proyect.models.Fingerprints;
+import com.everis.proyect.models.Persons;
+import com.everis.proyect.models.Reniec;
+import com.everis.proyect.models.ValidAccounts;
+import com.everis.proyect.service.PersonService;
+import io.reactivex.Single;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RefreshScope
+@RestController
+@RequestMapping("/atm")
+public class AtmDepositResponseController {
+  @Autowired
+  PersonService personService;
+  
+  /***
+   * 
+   * @param documentNumber
+   * @return
+   * @throws Exception
+   */
+  
+  @PostMapping("/deposits/")
+  
+  public Single<AtmDeposit> postAtmDeposit(@RequestBody String documentNumber) throws Exception {
+    JSONObject document = new JSONObject(documentNumber);
+    AtmDeposit atmDeposit = new AtmDeposit();
+    try {
+      Persons person = personService.findByDocument(document.getString("documentNumber"));
+      System.out.println("blacklist: " + person.isBlacklist());
+      if (person.isBlacklist()) {
+        System.out.println("Person en lista negra, no se pudo obtener data");
+        throw new Exception("Person en lista negra, no se pudo obtener data");
+      } else {
+        System.out.println("Fingerprint: " + person.isFingerprint());
+        if (person.isFingerprint()) {
+          Fingerprints fingerprints = personService.findFingerprintByDocument(document
+              .getString("documentNumber"));
+          atmDeposit.setFingerprintEntityName(fingerprints.getEntityName());
+        } else {
+          Reniec reniec = personService.findReniecByDocument(document.getString("documentNumber"));
+          atmDeposit.setFingerprintEntityName(reniec.getEntityName());
+          person.setFingerprint(true);
+          personService.updatePerson(person, document.getString("documentNumber"));
+          System.out.println("Se registro huella digital de reniec: " + documentNumber);
+        }
+        List<ValidAccounts> listValidAccounts = new ArrayList<ValidAccounts>();
+        System.out.println("documentNumber: " + document.getString("documentNumber"));
+        personService.findCardsByDocument(document.getString("documentNumber")).getCards().stream()
+            .filter(x -> x.isActive()).collect(Collectors.toList()).stream().forEach(card -> {
+              System.out.println(card.getNumTarjeta());
+              personService.findAccountByCard(card.getNumTarjeta()).getListAccount().stream()
+                  .forEach(accountcard -> {
+                    System.out.println(accountcard.getAccountNumber());
+                    listValidAccounts.add(new ValidAccounts(accountcard.getAccountNumber()));
+                    atmDeposit.setCustomerAmount(atmDeposit.getCustomerAmount() 
+                        + accountcard.getAmount());
+                  });
+            }); 
+        atmDeposit.setValidAccounts(listValidAccounts);
+        return Single.just(atmDeposit);
+      }
+    } catch (NullPointerException e) {
+      System.out.println(e.getMessage());
+      throw Exception(e.getMessage());
+    }
+  }
+}
