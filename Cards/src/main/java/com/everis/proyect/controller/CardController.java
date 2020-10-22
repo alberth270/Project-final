@@ -37,10 +37,6 @@ public class CardController {
         @RequestParam(value = "documentNumber") String documentNumber) throws Exception {
     logger.info("document: " + documentNumber);
     logger.info("numberCard: " + numberCard);
-    if (documentNumber.isEmpty()) {
-      logger.info("Numero de documento vacio");
-      throw new Exception();
-    }
     try {
       return this.getResponse(numberCard);
     } catch (NullPointerException e) {

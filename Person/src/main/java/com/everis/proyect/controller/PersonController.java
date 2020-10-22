@@ -37,9 +37,9 @@ public class PersonController {
     try {
       logger.info(documento);
       return service.findbyDocumento(documento);
-    } catch (NullPointerException e) {
+    } catch (Exception e) {
       logger.info(e.getMessage());
-      throw new Exception();
+      return Single.just(new Person(0L, e.getMessage(), true, true));
     }
   }
   
@@ -52,13 +52,14 @@ public class PersonController {
  */
   
   @PutMapping("/acualiza/reniec/{documentNumber}")
-  public Single<Person> putPerson(@RequestBody Person person, @PathVariable String documentNumber) throws Exception {
+  public Single<Person> putPerson(@RequestBody Person person, @PathVariable String documentNumber)
+      throws Exception {
     try {
-      logger.info("entro a putPerson con valor: " + documentNumber);
+      logger.info("entro a putPerson con valor: ${documentNumber}");
       return service.update(documentNumber, person);
     } catch (Exception e) {
       logger.info(e.getMessage());
-      throw new Exception();
+      return Single.just(new Person(0L, e.getMessage(), true, true));
     }
   }
 }

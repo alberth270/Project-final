@@ -1,16 +1,14 @@
 spring:
   application:
     name: loadbalance
-    
   cloud:
     config:
-      server:
-        git:
-          uri: https://github.com/alberth270/SpringClound
-          searchPaths: ConfigData
-        native:
-          searchLocations: classpath:offline-repository/
-
+      uri: http://localhost:8080
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 zuul:
   routes:
     users:
@@ -25,4 +23,4 @@ eureka:
       defaultZone: http://localhost:8180/eureka/
 
 server:
-  port: 8080   # HTTP (Tomcat) port
+  port: 8082   # HTTP (Tomcat) port
