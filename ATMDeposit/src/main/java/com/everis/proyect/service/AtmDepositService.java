@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class AtmDepositService {
   @Autowired
   ApiService service;
-  private AtmDeposit atemDeposit;
+  private AtmDeposit atemDeposit = new AtmDeposit();
   private final Logger logger = LoggerFactory.getLogger(getClass().getName());
   /***
    * 
@@ -29,10 +29,9 @@ public class AtmDepositService {
    */
 
   public Single<AtmDeposit> business(String documentNumber) throws Exception {
-    atemDeposit = new AtmDeposit();
     Persons person = new Persons();
     person = responseperson(documentNumber);
-    if(person.getId() == 0L) {
+    if (person.getId() == 0L) {
       logger.info(person.getDocumento());
       throw new Exception(person.getDocumento());
     }
