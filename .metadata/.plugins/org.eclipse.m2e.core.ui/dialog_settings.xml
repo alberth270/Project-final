@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<section name="MavenProjectImportWizardPage">
 		<list key="rootDirectory">
+			<item value="C:\Users\abancesa\Documents\proyecto final\pruebas_desarrollo\JUnitTaller-master"/>
 			<item value="C:\Users\abancesa\Documents\proyecto final\final"/>
 		</list>
 		<list key="projectNameTemplate">

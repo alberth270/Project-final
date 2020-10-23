@@ -32,7 +32,7 @@ public class PersonService implements BaseService<Person> {
       return Single.just(personrepository.save(entity)).observeOn(Schedulers.io());
     } catch (NullPointerException e) {
       logger.info("No se pudo actualizar fingerprint");
-      return Single.just(new Person(0L, e.getMessage(), true, true));
+      return Single.just(new Person(0L, e.getMessage(), false, false));
     }
   }
 }

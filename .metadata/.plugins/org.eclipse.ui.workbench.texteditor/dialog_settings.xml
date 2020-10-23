@@ -6,6 +6,9 @@
 		<item key="wholeword" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="updatePerson"/>
+			<item value="void"/>
+			<item value="validacc"/>
 			<item value="system"/>
 		</list>
 		<list key="replacehistory">

@@ -39,7 +39,7 @@ public class PersonController {
       return service.findbyDocumento(documento);
     } catch (Exception e) {
       logger.info(e.getMessage());
-      return Single.just(new Person(0L, e.getMessage(), true, true));
+      return Single.just(new Person(0L, e.getMessage(), false, false));
     }
   }
   

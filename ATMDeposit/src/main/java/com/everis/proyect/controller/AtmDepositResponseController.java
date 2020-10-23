@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/atm")
 public class AtmDepositResponseController {
+  private final Logger logger = LoggerFactory.getLogger(getClass().getName());
   @Autowired
   AtmDepositService atmDepositService;
-  private final Logger logger = LoggerFactory.getLogger(getClass().getName());
+  
 
   /***
    * 

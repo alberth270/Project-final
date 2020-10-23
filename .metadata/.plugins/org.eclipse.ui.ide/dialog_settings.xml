@@ -45,6 +45,7 @@
 		<item value="org.moreunit.light:3.2.1"/>
 		<item value="org.moreunit.mock:3.2.1"/>
 		<item value="org.moreunit:3.2.1"/>
+		<item value="org.sonarlint.eclipse.feature:5.4.0.22606"/>
 		<item value="org.sonatype.m2e.buildhelper.feature:0.15.0.201207090124"/>
 		<item value="org.sonatype.m2e.egit.feature:0.15.1.201806191431"/>
 		<item value="org.sonatype.m2e.mavenarchiver.feature:0.17.5.202002191804"/>

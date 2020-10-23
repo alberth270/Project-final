@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class AtmDepositService {
   @Autowired
   ApiService service;
-  private AtmDeposit atemDeposit = new AtmDeposit();
+  private AtmDeposit atemDeposit;
   private final Logger logger = LoggerFactory.getLogger(getClass().getName());
   /***
    * 
@@ -29,12 +29,17 @@ public class AtmDepositService {
    */
 
   public Single<AtmDeposit> business(String documentNumber) throws Exception {
+    atemDeposit = new AtmDeposit();
     Persons person = new Persons();
     person = responseperson(documentNumber);
+    if(person.getId() == 0L) {
+      logger.info(person.getDocumento());
+      throw new Exception(person.getDocumento());
+    }
     if (person.isBlacklist()) {
       logger.info("Person en lista negra, no se pudo obtener data");
       throw new Exception("Person en lista negra, no se pudo obtener data");
-    } else {
+    } else { 
       atemDeposit.setCustomerAmount(0.0);
       responfingerprint(person);
       listcards(person);
@@ -42,11 +47,16 @@ public class AtmDepositService {
     }
   }
 
-  private Persons responseperson(String documentNumber) {
+  public Persons responseperson(String documentNumber) {
     return service.findByDocument(documentNumber);
   }
 
-  private void responfingerprint(Persons person) {
+  /***
+   * 
+   * @param person
+   */
+  
+  public void responfingerprint(Persons person) {
     if (person.isFingerprint()) {
       
       atemDeposit.setFingerprintEntityName(service.findFingerprintByDocument(person.getDocumento())
@@ -55,10 +65,17 @@ public class AtmDepositService {
       logger.info("Se registro huella digital de reniec.");
       atemDeposit.setFingerprintEntityName(service.findReniecByDocument(person.getDocumento())
           .getEntityName());
+      person.setFingerprint(true);
+      service.updatePerson(person, person.getDocumento());
     }
   }
 
-  private void listcards(Persons person) {
+  /***
+   * 
+   * @param person
+   */
+  
+  public void listcards(Persons person) {
     logger.info("Se consultan tarjetas.");
     Cards cards = new Cards(service.findCardsByDocument(person.getDocumento())
         .getCards()
@@ -68,20 +85,24 @@ public class AtmDepositService {
     listaccount(cards);
   }
 
-  private void listaccount(Cards cards) {
-    logger.info("Se consultan cuentas por tarjeta.");
-    List<ValidAccounts> listValidAccounts = new ArrayList<>();
-    cards.getCards().parallelStream()
-        .forEach(card -> {
-          logger.info(card.getNumTarjeta());
-          service.findAccountByCard(card.getNumTarjeta()).getListAccount().stream()
-              .forEach(accountcard -> {
-                logger.info(accountcard.getAccountNumber());
-                listValidAccounts.add(new ValidAccounts(accountcard.getAccountNumber()));
-                atemDeposit.setCustomerAmount(atemDeposit.getCustomerAmount() + accountcard
-                    .getAmount());
-              });
-        });
-    atemDeposit.setValidAccounts(listValidAccounts);
-  }
+  /***
+   * 
+   * @param cards
+   */
+  
+  public void listaccount(Cards cards) {
+      List<ValidAccounts> listValidAccounts = new ArrayList<>();
+      cards.getCards().parallelStream()
+          .forEach(card -> {
+            logger.info(card.getNumTarjeta());
+            service.findAccountByCard(card.getNumTarjeta()).getListAccount().stream()
+                .forEach(accountcard -> {
+                  logger.info(accountcard.getAccountNumber());
+                  listValidAccounts.add(new ValidAccounts(accountcard.getAccountNumber()));
+                  atemDeposit.setCustomerAmount(atemDeposit.getCustomerAmount() + accountcard
+                      .getAmount());
+                });
+          });
+      atemDeposit.setValidAccounts(listValidAccounts);
+    }  
 }

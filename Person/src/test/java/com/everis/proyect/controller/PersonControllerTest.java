@@ -52,7 +52,6 @@ public class PersonControllerTest {
     /* Asserts */
     testObserver
       .assertSubscribed()
-        .assertComplete()
-        .assertError(Exception.class); 
+        .assertComplete();
   }
 }
